@@ -1,8 +1,10 @@
 CC = gcc
 CILKCC = icc
 CUCC = gcc 
-MPICC = mpicc
-CCFLAGS = -std=c99 -Wall -Wextra -Werror -pedantic-errors -O2
+MPICC = mpic++
+FLAGS = -Wall -Wextra -Werror -pedantic-errors -O2
+CCFLAGS = -std=c99 $(CFLAGS)
+CPPFLAGS = -std=c++11 $(CFLAGS)
 LDLIBS = 
 SDLLIBS = -I/Library/Frameworks/SDL.framework/Headers
 SDL = -framework SDL2
@@ -25,8 +27,8 @@ cilk: main.c support/*.h cilk/step.h
 cuda: main.c support/*.h cuda/step.h cuda/goForth.h
 	$(CUCC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
-mpi: main.c support/*.h mpi/step.h mpi/goForth.h
-	$(MPICC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
+mpi: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h
+	$(MPICC) $(CPPFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
 test:
 	make basic

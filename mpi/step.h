@@ -1,11 +1,15 @@
-#ifndef _STEP_H
-#define _STEP_H
+#ifndef _MPISTEP_H
+#define _MPISTEP_H
 
-void step(square_t *grid, square_t *newGrid, const long rows, const long cols){
-	(void) grid;
-	(void) newGrid;
-	(void) rows;
-	(void) cols;
-}
+#include "../support/singleStep.h"
 
-#endif //_STEP_H
+// For ease of use
+#define grid(i, j) grid[(i) + (j) * rows]
+#define newGrid(i, j) newGrid[(i) + (j) * rows]
+
+void step(const square_t *grid, square_t *newGrid, const long rows, 
+          const long cols, 
+          const int left, const int right, const int above, const int below) {
+  }
+
+#endif //_MPISTEP_H
