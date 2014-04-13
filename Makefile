@@ -36,7 +36,7 @@ test:
 	make omp
 	make cilk
 	make cuda
-	make mpi
+	make mpigol
 	make clean
 
 clean:
