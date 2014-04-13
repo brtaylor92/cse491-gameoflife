@@ -17,7 +17,7 @@
   SDL_Renderer *renderer;
 #endif
 
-#define grid(i, j) grid[(j) + (i) * rows]
+#define grid(i, j) grid[(j) + (i) * cols]
 
 void readGrid(square_t *grid, const long rows, const long cols, FILE *fp) {
   for(long i = 0; i < rows; i++) {
