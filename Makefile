@@ -3,14 +3,14 @@ CILKCC = icc
 CUCC = gcc 
 MPICC = mpic++
 FLAGS = -Wall -Wextra -Werror -pedantic-errors -O2
-CCFLAGS = -std=c99 $(CFLAGS)
-CPPFLAGS = -std=c++11 $(CFLAGS)
+CCFLAGS = -std=c99 $(FLAGS)
+CPPFLAGS = -std=c++11 $(FLAGS)
 LDLIBS = 
 SDLLIBS = -I/Library/Frameworks/SDL.framework/Headers
 SDL = -framework SDL2
 EXECNAME = gol
 
-.PHONY: basic gui omp cilk cuda mpi test clean
+.PHONY: basic gui omp cilk cuda mpigol test clean
 
 basic: main.c support/*.h
 	$(CC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
@@ -27,7 +27,7 @@ cilk: main.c support/*.h cilk/step.h
 cuda: main.c support/*.h cuda/step.h cuda/goForth.h
 	$(CUCC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
-mpi: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h
+mpigol: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h
 	$(MPICC) $(CPPFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
 test:
