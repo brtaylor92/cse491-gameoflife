@@ -4,8 +4,8 @@
 #include "../support/singleStep.h"
 
 // For ease of use
-#define grid(i, j) grid[(i) + (j) * rows]
-#define newGrid(i, j) newGrid[(i) + (j) * rows]
+#define grid(i, j) grid[(j) + (i) * cols]
+#define newGrid(i, j) newGrid[(j) + (i) * cols]
 
 void step(const square_t *grid, square_t *newGrid, const long rows, 
           const long cols) {
