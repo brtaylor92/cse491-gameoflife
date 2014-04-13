@@ -67,7 +67,7 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
          
           for(long k = 0; k < thisTileRows; k++) {
             for(long l = 0; l < thisTileCols; l++) {
-              outbound[(k+1)*thisTileCols+(l+1)] = gridA[(i*tileCols+k)*rows+(j*tileRows+l)];
+              outbound[(k+1)*(thisTileCols+2)+(l+1)] = gridA[(i*tileCols+k)*rows+(j*tileRows+l)];
             }
           }
           MPI_Request request;
@@ -75,9 +75,9 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
                     MPI_BYTE, i*procCols + j, 0, MPI_COMM_WORLD, &request);
         }
       }
-      for(long i = 0; i < myRows+2; i++) {
-        for(long j = 0; j < myCols+2; j++) {
-          myGridA[(i+1)*myCols+(j+1)] = gridA[i*rows+j];
+      for(long i = 0; i < myRows; i++) {
+        for(long j = 0; j < myCols; j++) {
+          myGridA[(i+1)*(myCols+2)+(j+1)] = gridA[i*rows+j];
         }
       }
     } else if(rank < procRows*procCols) {
@@ -93,7 +93,7 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
     cout << endl << "tile " << rank << " (" << myRows << " rows, " << myCols << " cols):" << endl;
     for(long i = 0; i < myRows; i++) {
       for(long j = 0; j < myCols; j++) { 
-        cout << int(myGridA[(i+1)*myCols+(j+1)]) << " ";
+        cout << int(myGridA[(i+1)*(myCols+2)+(j+1)]) << " ";
       }
       cout << endl;
     }
@@ -101,13 +101,53 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
       MPI_Request request;
       MPI_Isend(&baton, 1, MPI_INT, rank+1, 0, MPI_COMM_WORLD, &request);
     }
+
+    if(rank == 0) {
+      for(long i = 0; i < procRows; i++) {
+        long thisTileRows = (i != procRows-1 ? tileRows : lastRows);
+        
+        for(long j = 1/(i+1); j < procCols; j++) {
+          long thisTileCols = (j != procCols-1 ? tileCols : lastCols);
+          vector<square_t> inbound((thisTileRows+2)*(thisTileCols+2), 0);
+          
+          MPI_Recv(inbound.data(), (thisTileRows+2)*(thisTileCols+2)*sizeof(square_t), MPI_BYTE,
+                   i*procCols+j, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          
+          for(long k = 0; k < thisTileRows; k++) {
+            for(long l = 0; l < thisTileCols; l++) {
+              gridB[(i*tileCols+k)*rows+(j*tileRows+l)] = inbound[(k+1)*(thisTileCols+2)+(l+1)];
+            }
+          }
+        }
+      }
+      for(long i = 0; i < myRows; i++) {
+        for(long j = 0; j < myCols; j++) {
+          gridB[i*rows+j] = myGridA[(i+1)*(myCols+2)+(j+1)];
+        }
+      }
+    } else if(rank < procRows*procCols) {
+      MPI_Request request;
+      MPI_Isend(myGridA.data(), (myRows+2)*(myCols+2)*sizeof(square_t), 
+                MPI_BYTE, 0, 0, MPI_COMM_WORLD, &request); 
+    }
+
+    if(rank == 0) {
+      cout << "\nfinal grid:" << endl;
+      for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols;  j++) {
+          cout << int(gridB[i*cols+j]) << " ";
+        }
+        cout << endl;
+      }
+      cout << endl;
+    }
+
     (void) left;
     (void) right;
     (void) above;
     (void) below;
 
   }
-  (void) gridB;
   (void) numSteps;
   }
 #endif //_GOFORTH_H
