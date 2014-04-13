@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
-#define grid(i, j) grid[(i) + (j) * rows]
+#define grid(i, j) grid[(j) + (i) * cols]
 
 void logSDLError(const char *msg){
   printf("%s error: %s\n", msg, SDL_GetError());
