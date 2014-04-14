@@ -15,12 +15,12 @@ using std::endl;
 #define newGrid(i, j) newGrid[(j) + (i) * cols]
 
 void step(square_t *grid, square_t *newGrid, const long rows, 
-          const long cols, int rank, 
+          const long cols, 
           const int left, const int right, const int above, const int below) {
 
   //initialize mpi requests/trackers
   MPI_Request topReq, botReq, leftReq, rightReq;
-  bool topRecv = false, botRecv = false, sidesSent = false;
+  int topRecv = 0, botRecv = 0, sidesSent = 0;
   
   //send the top and bottoms rows off
   MPI_Isend(&grid(1,1), (cols-2)*sizeof(square_t), MPI_BYTE, above, 1,
@@ -38,26 +38,46 @@ void step(square_t *grid, square_t *newGrid, const long rows,
 
   //update the inner parts of the grid (that don't need info from other grids)
   for(long i = 2; i < rows-2; i++) {
+    if(!topRecv) {
+      MPI_Iprobe(above, 2, MPI_COMM_WORLD, &topRecv, MPI_STATUS_IGNORE);
+      if(topRecv) {
+        MPI_Recv(&grid(0, 1), (cols-2)*sizeof(square_t), MPI_BYTE, above, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        leftSendBuff[0] = grid(0, 1);
+        rightSendBuff[0] = grid(0, cols-2);
+      }
+    }
+    if(!botRecv) {
+      MPI_Iprobe(below, 1, MPI_COMM_WORLD, &botRecv, MPI_STATUS_IGNORE);
+      if(botRecv) {
+          MPI_Recv(&grid(rows-1 ,1), (cols-2)*sizeof(square_t), MPI_BYTE, below, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          leftSendBuff[rows-1] = grid(rows-1, 1);
+          rightSendBuff[rows-1] = grid(rows-1, cols-2);
+      }
+    }
+    if(topRecv && botRecv && !sidesSent) {
+      MPI_Isend(leftSendBuff, rows*sizeof(square_t), MPI_BYTE, left, 3, MPI_COMM_WORLD, &leftReq);
+      MPI_Isend(rightSendBuff, rows*sizeof(square_t), MPI_BYTE, right, 4, MPI_COMM_WORLD, &rightReq);
+      sidesSent = 1;
+    }
+    
     for(long j = 2; j < cols-2; j++) {
       newGrid(i, j) = singleStep(grid, i, j, rows, cols);
     }
   }
-
-  MPI_Recv(&grid(0, 1), (cols-2)*sizeof(square_t), MPI_BYTE, above, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-  leftSendBuff[0] = grid(0, 1);
-  rightSendBuff[0] = grid(0, cols-2);
-  topRecv = true;
-  MPI_Recv(&grid(rows-1 ,1), (cols-2)*sizeof(square_t), MPI_BYTE, below, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-  leftSendBuff[rows-1] = grid(rows-1, 1);
-  rightSendBuff[rows-1] = grid(rows-1, cols-2);
-  botRecv = true;
-  
-  MPI_Isend(leftSendBuff, rows*sizeof(square_t), MPI_BYTE, left, 3, MPI_COMM_WORLD, &leftReq);
-  MPI_Isend(rightSendBuff, rows*sizeof(square_t), MPI_BYTE, right, 4, MPI_COMM_WORLD, &rightReq);
-  sidesSent = true;
-  (void) topRecv;
-  (void) botRecv;
-  (void) sidesSent;
+  if(!topRecv) {
+    MPI_Recv(&grid(0, 1), (cols-2)*sizeof(square_t), MPI_BYTE, above, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    leftSendBuff[0] = grid(0, 1);
+    rightSendBuff[0] = grid(0, cols-2);
+  }
+  if(!botRecv) {
+    MPI_Recv(&grid(rows-1 ,1), (cols-2)*sizeof(square_t), MPI_BYTE, below, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    leftSendBuff[rows-1] = grid(rows-1, 1);
+    rightSendBuff[rows-1] = grid(rows-1, cols-2);
+  }
+  if(!sidesSent) {
+    MPI_Isend(leftSendBuff, rows*sizeof(square_t), MPI_BYTE, left, 3, MPI_COMM_WORLD, &leftReq);
+    MPI_Isend(rightSendBuff, rows*sizeof(square_t), MPI_BYTE, right, 4, MPI_COMM_WORLD, &rightReq);
+  }
 
   //initialize, fill, and dump the incoming left/right data into the old grid's edges
   square_t* leftRecvBuff = (square_t*) malloc(rows*sizeof(square_t));
@@ -80,8 +100,6 @@ void step(square_t *grid, square_t *newGrid, const long rows,
     newGrid(rows-2, j) = singleStep(grid, rows-2, j, rows, cols);
   }
 
-  (void) rank;
-  
   //wait for neighbors to have all information they need
   MPI_Wait(&topReq, MPI_STATUS_IGNORE);
   MPI_Wait(&botReq, MPI_STATUS_IGNORE);

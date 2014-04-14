@@ -53,10 +53,15 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
     //process 0 sends each process the contents of the initial grid its working with
     vector<square_t> myGridA((myRows+2)*(myCols+2), 0), myGridB((myRows+2)*(myCols+2), 0);
     if(rank == 0) {
-      cout << "procRows: " << procRows << "\tprocCols: " << procCols << endl
-           << "tileRows: " << tileRows << "\ttileCols: " << tileCols << endl
-           << "lastRows: " << lastRows << "\tlastCols: " << lastCols << endl
-           << "procs used: " << procRows*procCols << " (" << 100.0*procRows*procCols/size << "%)" << endl;
+      cout << "Dimensions of process grid: " << procRows << "x" << procCols << endl
+           << "Dimensions of " << ((tileRows == lastRows) && (tileCols == lastCols) ? "" : "standard ") << "tiles: " 
+           << tileRows << "x" << tileCols << endl;
+      if(tileRows != lastRows) cout << "Dimensions of row-extended tiles: " << lastRows << "x" << tileCols << endl; 
+      if(tileCols != lastCols) {
+        cout << "Dimensions of column-extended tiles: " << tileRows << "x" << lastCols << endl;
+        if(tileRows != lastRows) cout << "Dimensions of the doubly-extended tile: " << lastRows << "x" << lastCols << endl;
+      }
+      cout << "Process usage: " << procRows*procCols << " (" << round(100.0*procRows*procCols/size) << "% of available)" << endl;
 
       for(long i = 0; i < procRows; i++) {
         long thisTileRows = (i != procRows-1 ? tileRows : lastRows);
@@ -87,7 +92,7 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
 
     //move to the future
     for(long t = 0; t < numSteps; t++) {
-      step(myGridA.data(), myGridB.data(), myRows+2, myCols+2, rank, left, right, above, below);
+      step(myGridA.data(), myGridB.data(), myRows+2, myCols+2, left, right, above, below);
       myGridA.swap(myGridB);
     }
 
