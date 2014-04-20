@@ -9,9 +9,9 @@
   #include <SDL2/SDL.h>
   
   #include "gui.h"
-
-  #define W_HEIGHT 800
-  #define W_WIDTH 800
+	
+	#define MAX_WIDTH 1300
+	#define MAX_HEIGHT 700
 
   SDL_Window *window;
   SDL_Renderer *renderer;
@@ -28,13 +28,15 @@ void readGrid(square_t *grid, const long rows, const long cols, FILE *fp) {
 }
 
 #ifdef gui
-  void initGUI() {
+  void initGUI(const long rows, const long cols) {
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
       logSDLError("SDL_Init");
     }
 
-    window = SDL_CreateWindow("Game of Life GUI", 100, 100, W_WIDTH,
-                              W_HEIGHT, SDL_WINDOW_SHOWN
+    window = SDL_CreateWindow("Game of Life GUI", 100, 100, 
+															(cols*MAX_HEIGHT>rows*MAX_WIDTH ? MAX_WIDTH : MAX_HEIGHT*cols/rows)+1,
+						 									(cols*MAX_HEIGHT<rows*MAX_WIDTH ? MAX_HEIGHT : MAX_WIDTH*rows/cols)+1,
+															SDL_WINDOW_SHOWN
                              );
     if(!window) {
       logSDLError("CreateWindow");
@@ -59,7 +61,9 @@ void printGrid(square_t *grid, const long rows, const long cols) {
   }
   printf("\n");
   #ifdef gui
-    drawGrid(grid, rows, cols, W_WIDTH, W_HEIGHT, renderer);
+    drawGrid(grid, rows, cols, (cols*MAX_HEIGHT>rows*MAX_WIDTH ? MAX_WIDTH : MAX_HEIGHT*cols/rows),
+						 									 (cols*MAX_HEIGHT<rows*MAX_WIDTH ? MAX_HEIGHT : MAX_WIDTH*rows/cols),
+															 renderer);
     SDL_RenderPresent(renderer);
     SDL_Delay(250);
   #endif

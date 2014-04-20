@@ -37,11 +37,11 @@ void drawGrid(square_t *grid, const long rows, const long cols,
   SDL_RenderClear(renderer);
 
   SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
-  for(long i = 0; i < height; i++) {
+  for(long i = 0; i <= height; i++) {
     if(i % steph == 0 || i % 4 == steph - 1) {
       SDL_RenderDrawLine(renderer, 0, i, width, i);
     }
-    for(long j = 0; j < width; j++) {
+    for(long j = 0; j <= width; j++) {
       if(j % stepw == 0 || j % 4 == stepw-1) {
         SDL_RenderDrawPoint(renderer, j, i);
       }

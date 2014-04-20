@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
   }
 
   #ifdef gui
-    initGUI();
+    initGUI(rows, cols);
   #endif
 
   
