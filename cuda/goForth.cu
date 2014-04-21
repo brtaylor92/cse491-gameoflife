@@ -13,8 +13,8 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
   cudaMemcpy(gridDevA, gridA, rows*cols, cudaMemcpyHostToDevice);
   cudaMemcpy(gridDevB, gridB, rows*cols, cudaMemcpyHostToDevice);
 
-  dim3 dimBlock(1, 1);
-  dim3 dimGrid(cols, rows);
+  dim3 dimBlock(rows/32 + 1, cols/32 + 1);
+  dim3 dimGrid(32, 32);
   printGrid(gridA, rows, cols);
   for(long i = 0; i < numSteps; i++) {
     step<<<dimBlock, dimGrid>>>(gridDevA, gridDevB, rows, cols);
@@ -22,7 +22,6 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
     gridDevA = gridDevB;
     gridDevB = temp;
     cudaMemcpy(gridA, gridDevA, rows*cols, cudaMemcpyDeviceToHost);
-    cudaMemcpy(gridB, gridDevB, rows*cols, cudaMemcpyDeviceToHost);
     printGrid(gridA, rows, cols);
   }
 
