@@ -26,7 +26,7 @@ cilk: main.c support/*.h cilk/step.h
 
 cuda: main.c support/*.h cuda/*
 	$(CUCC) -c --gpu-architecture compute_35 cuda/goForth.cu
-	$(CC) $(CCFLAGS) -c -D$@ main.c
+	$(CUCC) --compiler-options '-std=c99' -c -D$@ main.c
 	$(CUCC) --gpu-architecture compute_35  main.o goForth.o -o $(EXECNAME)
 
 mpigol: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h

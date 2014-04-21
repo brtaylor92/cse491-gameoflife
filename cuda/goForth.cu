@@ -1,6 +1,7 @@
 #include <cuda.h>
 
 #include "../support/squaret.h"
+#include "../support/io.h"
 #include "goForth.h"
 #include "step.cuh"
 
@@ -9,17 +10,22 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
   square_t *gridDevA, *gridDevB;
   cudaMalloc(&gridDevA, rows*cols);
   cudaMalloc(&gridDevB, rows*cols);
-  cudaMemcpy(&gridDevA, &gridA, rows*cols, cudaMemcpyHostToDevice);
-  cudaMemcpy(&gridDevB, &gridB, rows*cols, cudaMemcpyHostToDevice);
+  cudaMemcpy(gridDevA, gridA, rows*cols, cudaMemcpyHostToDevice);
+  cudaMemcpy(gridDevB, gridB, rows*cols, cudaMemcpyHostToDevice);
 
-  dim3 dims(cols, rows);
-
+  dim3 dimBlock(1, 1);
+  dim3 dimGrid(cols, rows);
+  printGrid(gridA, rows, cols);
   for(long i = 0; i < numSteps; i++) {
-    step<<<1,dims>>>(gridDevA, gridDevB, rows, cols);
+    step<<<dimBlock, dimGrid>>>(gridDevA, gridDevB, rows, cols);
+    square_t *temp = gridDevA;
+    gridDevA = gridDevB;
+    gridDevB = temp;
+    cudaMemcpy(gridA, gridDevA, rows*cols, cudaMemcpyDeviceToHost);
+    cudaMemcpy(gridB, gridDevB, rows*cols, cudaMemcpyDeviceToHost);
+    printGrid(gridA, rows, cols);
   }
 
-  cudaMemcpy(&gridA, &gridDevA, rows*cols, cudaMemcpyDeviceToHost);
-  cudaMemcpy(&gridB, &gridDevB, rows*cols, cudaMemcpyDeviceToHost);
-  cudaFree(&gridDevA);
-  cudaFree(&gridDevB);
+  cudaFree(gridDevA);
+  cudaFree(gridDevB);
 }

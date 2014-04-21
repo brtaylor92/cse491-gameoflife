@@ -37,9 +37,6 @@ __global__ void step(square_t *grid, square_t *newGrid,
                      + grid((i + 1) % rows       , (j - 1 + cols) % cols )
                      + grid((i + 1) % rows       , (j + 1) % cols        );
   newGrid(i,j) = rules[(grid(i,j) << 3) | neighbors];
-  square_t *temp = grid;
-  grid = newGrid;
-  newGrid = temp;
 }
 	
 #endif //_STEP_H
