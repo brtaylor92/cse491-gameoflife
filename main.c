@@ -18,7 +18,7 @@
  ******************************************************************************/
 
 #ifdef cuda
-  #include "cuda/goForth.cuh"
+  #include "cuda/goForth.h"
 #endif
 
 #if !defined(cuda)

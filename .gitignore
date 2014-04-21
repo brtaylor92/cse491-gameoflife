@@ -1,2 +1,4 @@
 # Executable
 gol
+*.o
+grid.txt

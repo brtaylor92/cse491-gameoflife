@@ -1,10 +1,10 @@
 #include <cuda.h>
 
 #include "../support/squaret.h"
-#include "goForth.cuh"
+#include "goForth.h"
 #include "step.cuh"
 
-__host__ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
+void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
                         const long cols, const long numSteps) {
   square_t *gridDevA, *gridDevB;
   cudaMalloc(&gridDevA, rows*cols);
