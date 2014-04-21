@@ -1,6 +1,6 @@
 CC = gcc
 CILKCC = icc
-CUCC = gcc 
+CUCC = nvcc
 MPICC = mpic++
 FLAGS = -Wall -Wextra -Werror -pedantic-errors -O2
 CCFLAGS = -std=c99 $(FLAGS)
@@ -24,19 +24,18 @@ omp: main.c support/*.h omp/step.h
 cilk: main.c support/*.h cilk/step.h
 	$(CILKCC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
-cuda: main.c support/*.h cuda/step.h cuda/goForth.h
-	$(CUCC) $(CCFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
+cuda: main.c support/*.h cuda/*
+	$(CUCC) -c --gpu-architecture compute_35 cuda/goForth.cu
+	$(CC) $(CCFLAGS) -c -D$@ main.c
+	$(CUCC) --gpu-architecture compute_35  main.o goForth.o -o $(EXECNAME)
 
 mpigol: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h
 	$(MPICC) $(CPPFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
 test:
 	make basic
-	make gui
 	make omp
-	make cilk
 	make cuda
-	make mpigol
 	make clean
 
 clean:

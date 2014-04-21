@@ -6,7 +6,7 @@
 /*******************************************************************************
  * Grid type
  ******************************************************************************/
-typedef unsigned char square_t;
+#include "support/squaret.h"
 
 /*******************************************************************************
  * Input/Output
@@ -16,29 +16,12 @@ typedef unsigned char square_t;
 /*******************************************************************************
  * Step and goForth functions
  ******************************************************************************/
-#ifdef omp
-  #include "omp/step.h"
-#endif
-
-#ifdef cilk
-  #include "cilk/step.h"
-#endif
 
 #ifdef cuda
-  #include "cuda/step.h"
-  #include "cuda/goForth.h"
+  #include "cuda/goForth.cuh"
 #endif
 
-#ifdef mpi
-  #include "mpi/step.h"
-  #include "mpi/goForth.h"
-#endif
-
-#if defined(basic)
-  #include "basic/step.h"
-#endif
-
-#if !defined(cuda) && !defined(mpi)
+#if !defined(cuda)
   #include "basic/goForth.h"
 #endif
 
