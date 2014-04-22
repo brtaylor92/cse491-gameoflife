@@ -19,7 +19,7 @@ square_t singleStep(const square_t *grid, const long i, const long j,
   // (1,5) => 13
   // (1,6) => 14
   // (1,7) => 15
-  // (1,8) => 16
+  // (1,8) => 15
   const unsigned char rules[16] = {0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0};
   square_t neighbors = grid((i - 1 + rows) % rows,  j                    )
                      + grid((i - 1 + rows) % rows, (j - 1  + cols) % cols)
