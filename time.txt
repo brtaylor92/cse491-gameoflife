@@ -87,9 +87,9 @@ real	0m11.406s
 user	0m15.291s
 sys	0m0.483s
 
-real	0m14.700s
-user	0m41.108s
-sys	0m0.488s
+real    0m12.080s
+user    0m27.484s
+sys     0m0.675s
 
 real	0m13.315s
 user	0m51.926s
