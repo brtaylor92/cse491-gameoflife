@@ -126,7 +126,7 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
                0, 0, MPI_COMM_WORLD, &request);
     }
 
-    if(rank == 0) {
+    /*if(rank == 0) {
       cout << "\nfinal grid:" << endl;
       for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols;  j++) {
@@ -135,7 +135,7 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
         cout << endl;
       }
       cout << endl;
-    }
+    }*/
   }
 }
 #endif //_GOFORTH_H

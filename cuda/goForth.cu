@@ -15,15 +15,16 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
 
   dim3 dimBlock(rows/32 + 1, cols/32 + 1);
   dim3 dimGrid(32, 32);
-  printGrid(gridA, rows, cols);
+ // printGrid(gridA, rows, cols);
   for(long i = 0; i < numSteps; i++) {
     step<<<dimBlock, dimGrid>>>(gridDevA, gridDevB, rows, cols);
     square_t *temp = gridDevA;
     gridDevA = gridDevB;
     gridDevB = temp;
-    cudaMemcpy(gridA, gridDevA, rows*cols, cudaMemcpyDeviceToHost);
-    printGrid(gridA, rows, cols);
   }
+
+  //cudaMemcpy(gridA, gridDevA, rows*cols, cudaMemcpyDeviceToHost);
+  //printGrid(gridA, rows, cols);
 
   cudaFree(gridDevA);
   cudaFree(gridDevB);

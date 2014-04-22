@@ -1,0 +1,186 @@
+Timesteps: 64, 128, 512, 1024
+===============
+Basic 1024x1024
+===============
+real	0m2.759s
+user	0m2.753s
+sys	0m0.001s
+
+real	0m5.429s
+user	0m5.413s
+sys	0m0.007s
+
+real	0m21.531s
+user	0m21.490s
+sys	0m0.005s
+
+real	0m43.001s
+user	0m42.923s
+sys	0m0.006s
+
+=============
+OMP 1024x1024
+=============
+real	0m0.259s
+user	0m3.463s
+sys	0m0.008s
+
+real	0m0.854s
+user	0m14.907s
+sys	0m0.005s
+
+real	0m2.435s
+user	0m45.785s
+sys	0m0.016s
+
+real	0m3.411s
+user	1m5.719s
+sys	0m0.029s
+
+==============
+Cilk 1024x1024
+==============
+real	0m0.313s
+user	0m4.174s
+sys	0m0.279s
+
+real	0m0.525s
+user	0m8.230s
+sys	0m0.508s
+
+real	0m1.835s
+user	0m32.599s
+sys	0m2.190s
+
+real	0m3.573s
+user	1m5.208s
+sys	0m4.296s 
+
+==============
+Cuda 1024x1024
+==============
+real	0m0.583s
+user	0m0.147s
+sys	0m0.404s
+
+real	0m0.577s
+user	0m0.161s
+sys	0m0.391s
+
+real	0m0.872s
+user	0m0.400s
+sys	0m0.469s
+
+real	0m1.253s
+user	0m0.708s
+sys	0m0.542s
+
+*16384
+real	0m13.145s
+user	0m7.727s
+sys	0m5.393s
+
+=============
+MPI 1024x1024
+=============
+real	0m11.406s
+user	0m15.291s
+sys	0m0.483s
+
+real	0m14.700s
+user	0m41.108s
+sys	0m0.488s
+
+real	0m13.315s
+user	0m51.926s
+sys	0m0.529s
+
+real	0m14.767s
+user	1m2.885s
+sys	0m0.515s
+
+===============
+Basic 2048x2048
+===============
+real	0m12.342s
+user	0m12.316s
+sys	0m0.004s
+
+real	0m24.413s
+user	0m24.361s
+sys	0m0.008s
+
+real	1m36.786s
+user	1m36.612s
+sys	0m0.014s
+
+real	3m12.546s
+user	3m12.195s
+sys	0m0.028s
+
+=============
+OMP 2048x2048
+=============
+real	0m1.314s
+user	0m19.482s
+sys	0m0.013s
+
+real	0m1.675s
+user	0m27.091s
+sys	0m0.018s
+
+real	0m5.924s
+user	1m51.562s
+sys	0m0.020s
+
+real	0m11.117s
+user	3m35.265s
+sys	0m0.023s
+
+==============
+Cilk 2048x2048
+==============
+real	0m1.175s
+user	0m16.342s
+sys	0m0.676s
+
+real	0m2.019s
+user	0m32.510s
+sys	0m1.177s
+
+real	0m7.010s
+user	2m8.735s
+sys	0m4.535s
+
+real	0m13.695s
+user	4m16.037s
+sys	0m10.544s
+
+==============
+Cuda 2048x2048
+==============
+real	0m0.842s
+user	0m0.406s
+sys	0m0.399s
+
+real	0m0.841s
+user	0m0.440s
+sys	0m0.398s
+
+real	0m1.187s
+user	0m0.712s
+sys	0m0.472s
+
+real	0m1.644s
+user	0m1.061s
+sys	0m0.578s
+
+*16384
+real	0m15.370s
+user	0m8.885s
+sys	0m6.454s
+
+=============
+MPI 2048x2048
+=============
+Out of memory/segfault
