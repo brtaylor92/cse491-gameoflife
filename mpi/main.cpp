@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   if(argc != 6) {
-      if(rank == 0) printf("format: %s [fileName] [numRows] [numCols] [numSteps] [minSize]\n", argv[0]);
+      if(rank == 0) printf(
+        "format: mpirun -n [numProcs] %s [fileName] [numRows] [numCols] [numSteps] [minSize]\n", 
+        argv[0]);
       MPI_Finalize();
       return 1;
   }

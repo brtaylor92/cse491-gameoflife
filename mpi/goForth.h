@@ -13,10 +13,11 @@ using std::vector;
 using std::cout;
 using std::endl;
 
+#include "../support/io.h"
+
 void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows, 
                         const long cols, const long numSteps, const int rank, 
                         const int size, const long minSize) {
-	
   //determine the overall grid striping
   double aspectRatio = 1.0*cols/rows;
   long procRows = max(static_cast<long>(1), 
@@ -62,6 +63,10 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
         if(tileRows != lastRows) cout << "Dimensions of the doubly-extended tile: " << lastRows << "x" << lastCols << endl;
       }
       cout << "Process usage: " << procRows*procCols << " (" << round(100.0*procRows*procCols/size) << "% of available)" << endl;
+
+      if(rank == 0) {
+        printGrid(gridA, rows, cols);
+      }
 
       for(long i = 0; i < procRows; i++) {
         long thisTileRows = (i != procRows-1 ? tileRows : lastRows);
@@ -126,16 +131,9 @@ void goForthAndMultiply(square_t *gridA, square_t *gridB, const long rows,
                0, 0, MPI_COMM_WORLD, &request);
     }
 
-    /*if(rank == 0) {
-      cout << "\nfinal grid:" << endl;
-      for(int i = 0; i < rows; i++) {
-        for(int j = 0; j < cols;  j++) {
-          cout << int(gridB[i*cols+j]) << " ";
-        }
-        cout << endl;
-      }
-      cout << endl;
-    }*/
+    if(rank == 0) {
+      printGrid(gridB, rows, cols);
+    }
   }
 }
 #endif //_GOFORTH_H

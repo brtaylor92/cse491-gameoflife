@@ -32,11 +32,5 @@ cuda: main.c support/*.h cuda/*
 mpigol: mpi/main.cpp support/*.h mpi/step.h mpi/goForth.h
 	$(MPICC) $(CPPFLAGS) $(LDLIBS) -D$@ $< -o $(EXECNAME)
 
-test:
-	make basic
-	make omp
-	make cuda
-	make clean
-
 clean:
 	rm -rf gol
